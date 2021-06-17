@@ -9,6 +9,7 @@ class string {
   static const student_welcome_text =
       '''Check School posts to stay updated with school news.
 Take quizzes, test at home all through your phone''';
+static const notification ='Notifications';
   static const parents = 'Parents';
   static const parent_welcome_text = '''Stay in touch with your kid\'s teachers.
 Check School posts to stay updated with school news.''';
@@ -45,9 +46,10 @@ Check School posts to stay updated with school news.''';
 
 //Home
   static const home = 'Home';
-  static const chat = 'Chat';
+  static const chat = 'Statistiques';
   static const setting = 'Setting';
-  static const dashboard = 'Dashboard';
+  static const dashboard = 'Acccueil';
+  static const statistics = 'Statistics';
 
 //Setting
   static const profile = 'Profile';
@@ -97,6 +99,7 @@ Check School posts to stay updated with school news.''';
 
   // Childrens
   static const childrens = 'Personnel Disponible';
+  static const personnel = 'Personnel';
 
 //QuizPage
   static const exams = 'Exams';

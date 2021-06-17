@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
 import 'package:task_manager/core/enums/UserType.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -18,7 +19,7 @@ class SharedPreferencesHelper {
   Future<bool> setUserDataModel(String jsonModel) async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
     bool res = await preferences.setString(_userModel, jsonModel);
-    print('User Data Model saved ' + res.toString() + ' ' + jsonModel);
+    log('User Data Model saved ' + res.toString() + ' ' + jsonModel);
     return res;
   }
 
@@ -26,6 +27,7 @@ class SharedPreferencesHelper {
   Future<String> getUserDataModel() async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
     String res = preferences.getString(_userModel) ?? 'N.A';
+    log("shared prefs model "+res);
     print('User Data Model Retrived ' + res.toString());
     return res;
   }

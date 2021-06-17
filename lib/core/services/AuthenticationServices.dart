@@ -216,8 +216,11 @@ class AuthenticationServices extends Services {
 
   Future<AuthErrors> emailPasswordSignIn(String email, String password,
       UserType userType) async {//, String schoolCode
-    await sharedPreferencesHelper.clearAllData();
+    //await sharedPreferencesHelper.clearAllData();
     try {
+      
+
+      
       AuthErrors authErrors = AuthErrors.UNKNOWN;
 
 

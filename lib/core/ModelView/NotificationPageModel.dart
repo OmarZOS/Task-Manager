@@ -4,49 +4,31 @@
 // import 'package:ourESchool/core/viewmodel/BaseModel.dart';
 // import 'package:ourESchool/locator.dart';
 
-import 'dart:developer';
-
 import 'package:task_manager/core/enums/ViewState.dart';
-import 'package:task_manager/core/services/AnnouncementServices.dart';
+import 'package:task_manager/core/services/NotificationServices.dart';
 import 'package:task_manager/core/services/ProfileServices.dart';
 
 import '../../locator.dart';
 import 'BaseModel.dart';
 
-class AnnouncementPageModel extends BaseModel { 
-  AnnouncementServices _announcementServices = locator<AnnouncementServices>();
+class NotificationPageModel extends BaseModel { 
+  NotificationServices _notifServices = locator<NotificationServices>();
 
-  AnnouncementPageModel();
+  NotificationPageModel();
 
   List<dynamic> get postSnapshotList =>
-      _announcementServices.myTasks;
+      _notifServices.myNotifications;
 
-  getAnnouncements(String stdDiv_Global) async {
+  getNotifs(String stdDiv_Global) async {
     setState(ViewState.Busy);
-    await _announcementServices.getAnnouncements(stdDiv_Global );
+    await _notifServices.getNotifications(locator<ProfileServices>().user.email );
     setState(ViewState.Idle);
   }
 
   onRefresh(String stdDiv_Global) async {
     // _announcementServices.postDocumentSnapshots.clear();
     // _announcementServices.lastPostSnapshot = null;
-    await getAnnouncements(stdDiv_Global);
-  }
-
-   Future<bool> endTask(int index) async {
-     
-     if(await _announcementServices.endTask(_announcementServices.myTasks[index]["ID_TACHE"])){
-
-       log("removing task index : "+index.toString());
-       log("id : "+_announcementServices.myTasks[index]["ID_TACHE"]);
-        _announcementServices.myTasks.removeAt(index);
-       return true;
-     }
-
-     log("not removed?");
-    return false;
-     
-    
+    await getNotifs(stdDiv_Global);
   }
 
   @override

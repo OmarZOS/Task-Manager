@@ -19,7 +19,7 @@ class ProfilePageModel extends BaseModel {
 
   AppUser userProfile;
 
-  List<AppUser> get childrens => _profileServices.childrens;
+  List<AppUser> get childrens => _profileServices.child;
 
   ProfilePageModel() {
     getUserProfileData();

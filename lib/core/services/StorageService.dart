@@ -1,16 +1,10 @@
-import 'dart:developer';
-import 'dart:convert';
 //import 'dart:js';
 
-import 'package:flutter/widgets.dart';
-import 'package:path/path.dart' as p;
 import 'package:provider/provider.dart';
-import 'package:task_manager/core/enums/UserType.dart';
 import 'package:task_manager/core/models/User.dart';
 import 'package:task_manager/core/services/Services.dart';
 
 import '../../locator.dart';
-import 'AuthenticationServices.dart';
 import 'ProfileServices.dart';
 
 
@@ -26,20 +20,18 @@ class StorageServices extends Services {
 
 
   ProfileServices _profileServices = locator<ProfileServices>();
-  AppUser _currentUser  =null;//AppUser(displayName:'flennn',id:'531f');
+  AppUser _currentUser  =null;
 
-
-
-  Map<String, AppUser> workersListMap = {"Homer" :AppUser(displayName: 'flenn1',email: 'jgd'), "Nobody" : AppUser(displayName: 'Anotherflenn1',email: 'sdqsjgd')   };//Map();
-
+  get child => _profileServices.child;//AppUser(displayName:'flennn',id:'531f');
 
 
 
   getChildrens() async {
-   //AppUser _currentUser  =Provider.of<AppUser>(context, listen: false);
-
+    AppUser _currentUser  =_profileServices.user;
     // log(_currentUser.DisplayName.toString());
-    // await _profileServices.getChildrens();
+    await _profileServices.getChildrens();
+
+    return _profileServices.child;
     
   }
 

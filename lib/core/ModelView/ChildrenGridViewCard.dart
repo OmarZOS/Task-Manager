@@ -42,13 +42,14 @@ class ChildrenGridViewCard extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: new BorderRadius.all(Radius.circular(10.0)),
-                      // image: DecorationImage(
+                      
+                      //image: DecorationImage(
                       //   image: Icon(Icons.zoom_in),
                       //   fit: BoxFit.scaleDown,
                       // ),
                     ),
                       child: new LayoutBuilder(builder: (context, constraint) {
-                         return new Icon(Icons.person_rounded ,size: constraint.biggest.height);
+                         return new Icon(user.sex=="Female"?Icons.female_rounded: Icons.person_rounded ,size: constraint.biggest.height);
                          }),
                   ),
                 ),
@@ -72,12 +73,12 @@ class ChildrenGridViewCard extends StatelessWidget {
                           style: ktitleStyle.copyWith(color: Colors.white)
                         ),
                         Text(
-                          user.email,
+                          user.disponible?"Disponible":"Indisponible",
                           // registerd
                           //     ? user.standard + '-' + user.division
                           //     : 
                           textAlign: TextAlign.center,
-                          style: ksubtitleStyle.copyWith(color: Colors.white),
+                          style: ksubtitleStyle.copyWith(color: user.disponible?Colors.greenAccent.withOpacity(0.5):Colors.redAccent.withOpacity(0.5)),
                         ),
                       ],
                     ),

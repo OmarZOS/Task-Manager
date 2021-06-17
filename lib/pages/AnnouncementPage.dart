@@ -1,4 +1,6 @@
 //import 'package:ourESchool/imports.dart';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -8,16 +10,18 @@ import 'package:task_manager/core/ModelView/BaseView.dart';
 import 'package:task_manager/core/enums/UserType.dart';
 import 'package:task_manager/core/enums/ViewState.dart';
 import 'package:task_manager/core/models/User.dart';
+import 'package:task_manager/core/services/ProfileServices.dart';
 import 'package:task_manager/widgets/MyReusableTile.dart';
 import 'package:task_manager/widgets/TopBar.dart';
 import '../Utilities/Resources.dart';
 
+import '../locator.dart';
 import 'CreateAnnouncement.dart';
 
 class AnnouncementPage extends StatefulWidget  {
   AnnouncementPage({
     Key key,
-    this.announcementFor = '',
+    this.announcementFor
   }) : super(key: key) {
     // setCurrentScreen();
   }
@@ -25,19 +29,36 @@ class AnnouncementPage extends StatefulWidget  {
   final String announcementFor;
 
   @override
-  _AnnouncementPageState createState() => _AnnouncementPageState();
+  _AnnouncementPageState createState() => _AnnouncementPageState(announcementFor);
 
   @override
+  
   String get screenName => string.announcement + 'Page';
 }
 
 class _AnnouncementPageState extends State<AnnouncementPage>
     with AutomaticKeepAliveClientMixin {
+  _AnnouncementPageState(this.announcementFor);
+
+
+
+  _showSnack1() => ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(content: Text("Tâche archivée"),
+      duration: Duration(seconds: 1),
+      )
+  );
+  _showSnack2() => ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(content: Text(("échec de terminaison de tâche")),
+      duration: Duration(seconds: 1),
+      )
+  );
+  String announcementFor;
+
   bool isTeacher = false;
 
   ScrollController controller;
   AnnouncementPageModel model = AnnouncementPageModel();
-  String stdDiv_Global = 'Global';
+  // String stdDiv_Global = 'Global';
   final scaffoldKey = GlobalKey<ScaffoldState>();
   bool isLast = false;
   bool isLoaded = false;
@@ -48,10 +69,12 @@ class _AnnouncementPageState extends State<AnnouncementPage>
 
   @override
   void initState() {
+    //log(locator<ProfileServices>().user.email);
+    // model.getAnnouncements(locator<ProfileServices>().user.email);
     controller = ScrollController()..addListener(_scrollListener);
     super.initState();
-    stdDiv_Global =
-        widget.announcementFor == '' ? 'Global' : widget.announcementFor;
+    // stdDiv_Global =
+        // widget.announcementFor == '' ? 'Global' : widget.announcementFor;
   }
 
   @override
@@ -63,15 +86,22 @@ class _AnnouncementPageState extends State<AnnouncementPage>
   void _scrollListener() {
     if (model.state == ViewState.Idle) {
       if (controller.position.pixels == controller.position.maxScrollExtent) {
-        // setState(() => _isLoading = true);
-        model.getAnnouncements(stdDiv_Global);
-        // scaffoldKey.currentState.widget
+        // setState(() => isLoaded = true);
+        log(announcementFor);
+        model.getAnnouncements(announcementFor);
+        scaffoldKey.currentState.widget;
+        // setState(() {
+          
+        // });
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+
+
+
     var userType = Provider.of<UserType>(context, listen: false);
     AppUser currentUser = Provider.of<AppUser>(context, listen: false);
     if (userType == UserType.TEACHER) {
@@ -84,17 +114,21 @@ class _AnnouncementPageState extends State<AnnouncementPage>
         isLoaded = true;
       }
 
-      print(stdDiv_Global);
+      // print(stdDiv_Global);
     }
     return BaseView<AnnouncementPageModel>(
-        onModelReady: (model) => model.getAnnouncements(stdDiv_Global),
+        onModelReady: (model)  {
+          
+          model.getAnnouncements(locator<ProfileServices>().user.email);
+          
+          },
         builder: (context, model, child) {
           this.model = model;
           return Scaffold(
             key: scaffoldKey,
             appBar: TopBar(
                 buttonHeroTag: string.announcement,
-                title: stdDiv_Global + " Posts",
+                title: "Tâches",
                 child: kBackBtn,
                 onPressed: () {
                   kbackBtn(context);
@@ -117,49 +151,6 @@ class _AnnouncementPageState extends State<AnnouncementPage>
                     ),
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(left: 31),
-                  child: Align(
-                    alignment: Alignment.bottomLeft,
-                    child: userType == UserType.STUDENT
-                        ? FloatingActionButton.extended(
-                            label: Text(buttonLabel),
-                            heroTag: 'abc',
-                            elevation: 12,
-                            onPressed: () async {
-                              if (stdDiv_Global == 'Global') {
-                                setState(() {
-                                  buttonLabel = stdDiv_Global;
-                                  // stdDiv_Global = currentUser.standard +
-                                  //     currentUser.division.toUpperCase();
-                                });
-                              } else {
-                                setState(() {
-                                  buttonLabel = stdDiv_Global;
-                                  stdDiv_Global = 'Global';
-                                });
-                              }
-
-                              await model.onRefresh(stdDiv_Global);
-                            },
-                            icon: Icon(FontAwesomeIcons.globe),
-                            backgroundColor: Colors.red,
-                          )
-                        : userType == UserType.TEACHER
-                            ? FloatingActionButton.extended(
-                                label: Text('Filter'),
-                                heroTag: 'abc',
-                                elevation: 12,
-                                onPressed: () {
-                                  //Filter Posts Code Here
-                                  filterDialogBox(context, model);
-                                },
-                                icon: Icon(Icons.filter_list),
-                                backgroundColor: Colors.red,
-                              )
-                            : Container(),
-                  ),
-                ),
               ],
             ),
             body: Center(
@@ -168,32 +159,79 @@ class _AnnouncementPageState extends State<AnnouncementPage>
                   maxWidth: 700,
                 ),
                 child: RefreshIndicator(
-                  child: model.postSnapshotList.length == 0
+                  child: 
+                  model.postSnapshotList.length == 0
                       ? model.state == ViewState.Busy
                           ? kBuzyPage(color: Theme.of(context).accentColor)
                           : Container(
                               child: Center(
                                 child: Text(
-                                  'Aucune tâche disponible..',
+                                  'Aucune notification disponible..',
                                   style: ksubtitleStyle.copyWith(fontSize: 25),
                                 ),
                               ),
-                              color: Colors.red,
+                              // color: Colors.red,
                             ):
-                       ListView.builder(
+                        new ListView.builder(
                           addAutomaticKeepAlives: true,
                           cacheExtent: 10,
                           controller: controller,
-                          itemCount: model.postSnapshotList.length + 1,
+                          itemCount:  model.postSnapshotList.length,//model.postSnapshotList.length
                           itemBuilder: (context, index) {
-                            if (index < model.postSnapshotList.length) {
-                              return MyReusableTile(
+                            if (index < model.postSnapshotList.length) {//model.postSnapshotList.length
+                              return 
+                              (model.postSnapshotList[index]["Etat"]!="fin"?Column(
+                                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children:[MyReusableTile(
                                   // announcement: Announcement.fromSnapshot(
                                       // model.postSnapshotList[index]),
-                                      tittle: model.postSnapshotList[index]["Label_Tache"],
-                                      status: model.postSnapshotList[index]["Description"],
-                                      icon: Icon(Icons.task)
-                                       );
+                                      tittle: Text(model.postSnapshotList[index]["Label_Tache"]),//model.postSnapshotList[index]["Label_Tache"]
+                                      status: TextSpan(
+                                        // text : "About : ",
+                                        children: <TextSpan>[
+                                          TextSpan(
+                                              text: model.postSnapshotList[index]["Description"]+"\n",
+                                              style: TextStyle(color: Colors.blueAccent.withOpacity(1),fontSize:18)
+
+                                          ),
+                                          TextSpan(
+                                            text : "",//"Status : "+model.postSnapshotList[index]["Etat"]+"\n"
+                                          ),
+                                          TextSpan(
+                                            text : "Lancé le : "+model.postSnapshotList[index]["Date_Debut"]+"\n",
+                                          ),
+                                          TextSpan(
+                                            text : "Intervalle : "+model.postSnapshotList[index]["periode"]+" jours.\n",
+                                          ),
+                                        ],
+                                      ),//model.postSnapshotList[index]["Description"]
+                                      icon: Icon(Icons.time_to_leave),
+                                      TYPE: "Task",
+                                      id : model.postSnapshotList[index]["ID_TACHE"],
+                                      disponible : model.postSnapshotList[index]["Etat"]=="encours",
+                                      // disponible: model.postSnapshotList[index]["ID_TACHE"]
+
+                                    ),
+                                    ButtonTheme(
+                                      minWidth: 400,
+                                      child:ElevatedButton(onPressed: () { 
+                                        
+                                        showAlertDialog(context,index,model.postSnapshotList[index]["Label_Tache"]);
+                                        // setState(() {
+                                          
+                                        // });
+
+
+                                      },
+                                    child: Text("              Terminé?              "),
+                                    ) 
+                                    
+                                    
+                                    )
+                                      
+                                    ]
+                              ):Container());
+                              
                             } else {
                               return Center(
                                 child: new Opacity(
@@ -211,7 +249,7 @@ class _AnnouncementPageState extends State<AnnouncementPage>
                           },
                         ),
                   onRefresh: () async {
-                    await model.onRefresh(stdDiv_Global);
+                    await model.onRefresh(announcementFor);
                   },
                 ),
               ),
@@ -220,118 +258,60 @@ class _AnnouncementPageState extends State<AnnouncementPage>
         });
   }
 
-  Future filterDialogBox(BuildContext context, AnnouncementPageModel model) {
-    return showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(
-            string.show_announcement_of,
-            style: TextStyle(fontWeight: FontWeight.w700),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Text(
-                string.filter_announcement,
-                // style: TextStyle(fontFamily: 'Subtitle'),
-              ),
-              SizedBox(
-                height: 8,
-              ),
-              Container(
-                width: MediaQuery.of(context).size.width,
-                child: TextField(
-                  controller: _standardController,
-                  onChanged: (standard) {},
-                  keyboardType: TextInputType.number,
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  // decoration: InputDecoration(
-                  //     hintText: "Master Pass",
-                  //     hintStyle: TextStyle(fontFamily: "Subtitle"),
-                  //     ),
-                  decoration: kTextFieldDecoration.copyWith(
-                    hintText: string.standard_hint,
-                    labelText: string.standard,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                width: MediaQuery.of(context).size.width,
-                child: TextField(
-                  controller: _divisionController,
-                  onChanged: (division) {},
-                  keyboardType: TextInputType.text,
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  decoration: kTextFieldDecoration.copyWith(
-                    hintText: string.division_hint,
-                    labelText: string.division,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          actions: <Widget>[
-            Row(
-              children: <Widget>[
-                FlatButton(
-                  child: Text(string.cancel),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                FlatButton(
-                  child: Text('Global'.toUpperCase()),
-                  onPressed: () async {
-                    setState(() {
-                      stdDiv_Global = 'Global';
-                    });
-                    await model.onRefresh(stdDiv_Global);
-                    Navigator.pop(context);
-                  },
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                FlatButton(
-                  child: Text(string.filter),
-                  onPressed: () async {
-                    setState(() {
-                      stdDiv_Global = _standardController.text.trim() +
-                          _divisionController.text.trim().toUpperCase();
-                    });
-                    await model.onRefresh(stdDiv_Global);
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
-            )
-          ],
-        );
-      },
-    );
-  }
 
   @override
   // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
+
+
+showAlertDialog(BuildContext context, int index,String label) {
+
+  // set up the buttons
+  Widget cancelButton = FlatButton(
+    child: Text("Annuler"),
+    onPressed:  () {
+      kbackBtn(context);
+    },
+  );
+  Widget continueButton = FlatButton(
+    child: Text("Oui"),
+    onPressed:  () async {
+      if(await model.endTask(index)){
+        _showSnack1();
+
+      }
+      else _showSnack2();
+      
+      kbackBtn(context);
+      
+      setState(() {
+        
+      });
+
+
+    },
+  );
+
+  // set up the AlertDialog
+  AlertDialog alert = AlertDialog(
+    title: Text(label),
+    content: Text("Avez vous vraiment terminé cette tâche?"),
+    actions: [
+      cancelButton,
+      continueButton,
+    ],
+  );
+
+  // show the dialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
 }
+
+}
+
+
+

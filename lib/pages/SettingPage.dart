@@ -13,12 +13,15 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:task_manager/Utilities/constants.dart';
 import 'package:task_manager/core/enums/UserType.dart';
 import 'package:task_manager/core/helpers/shared_preferences_helper.dart';
 import 'package:task_manager/login/loginMain.dart';
 import 'package:task_manager/widgets/DynamicThemeChanger.dart';
 import '../Utilities/Resources.dart';
 import '../locator.dart';
+import 'About.dart';
+import 'ProfilePage.dart';
 
 
 
@@ -53,11 +56,7 @@ class _SettingPageState extends State<SettingPage> {
                   icon: FontAwesomeIcons.user,
                   onTap: () {
                     UserType userType = Provider.of<UserType>(context, listen: false);
-                    if (userType == UserType.PARENT) {
-                      // kopenPage(context, GuardianProfilePage());
-                    } else {
-                      // kopenPage(context, ProfilePage());
-                    }
+                      kopenPage(context, ProfilePage());
                   },
                   subtitle: string.profile_subtitle,
                   title: string.profile),
@@ -65,12 +64,12 @@ class _SettingPageState extends State<SettingPage> {
                   context: context,
                   icon: FontAwesomeIcons.signOutAlt,
                   onTap: () async {
-                    //await model.logoutUser();
+                    // await model.logoutUser();
                     Navigator.pushReplacement(context, MaterialPageRoute(
                       builder: (context) => LoginPage()
                     ),);
-                    // Navigator.pushNamedAndRemoveUntil(
-                    //     context, WelcomeScreen.id, (r) => false);
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, LoginPage.id, (r) => false);
                   },
                   subtitle: string.logout_subtitle,
                   title: string.logout),
@@ -80,20 +79,20 @@ class _SettingPageState extends State<SettingPage> {
                   onTap: changeBrightness,
                   subtitle: string.dark_theme_subtitle,
                   title: string.dark_theme),
-              settingTiles(
-                  context: context,
-                  icon: Icons.restore,
-                  onTap: () {
-                    // kopenPage(context, ForgotPasswordPage());
-                  },
-                  subtitle: string.send_recovery_mail,
-                  title: 'Forgot Password'),
+              // settingTiles(
+              //     context: context,
+              //     icon: Icons.restore,
+              //     onTap: () {
+              //       kopenPage(context, ForgotPasswordPage());
+              //     },
+              //     subtitle: string.send_recovery_mail,
+              //     title: 'Forgot Password'),
               settingTiles(
                   context: context,
                   icon: Icons.contact_mail,
                   onTap: () async {
                     print((await preferencesHelper.getParentsIds()).toString());
-                    // kopenPage(context, AboutUs());
+                    kopenPage(context, AboutUs());
                   },
                   subtitle: string.about_subtitle,
                   title: string.about),

@@ -22,7 +22,7 @@ import 'login/loginMain.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-  timeDilation = 2;
+  // timeDilation = 2;
   //await Firebase.initializeApp();
   //if (kIsWeb) await FirebaseFirestore.instance.enablePersistence();
 
@@ -113,6 +113,9 @@ class OurSchoolApp extends StatelessWidget {
   }
 
   Widget getHome(BuildContext context) {
+    
+  // return Home();
+
     AppUser currentUser = Provider.of<AppUser>(context, listen: false);
     UserType userType = Provider.of<UserType>(context, listen: false);
 
@@ -132,9 +135,9 @@ class OurSchoolApp extends StatelessWidget {
     // if(Provider.of<bool>(context, listen: false)){
     //   return Home();
     // }
-     if (userType == UserType.UNKNOWN) {
-       log("main.dart : Unknown user, go to login");
-       return LoginPage();
+    if (userType == UserType.UNKNOWN) {
+      log("main.dart : Unknown user, go to login");
+      return LoginPage();
     }
 
     if (userType!=UserType.UNKNOWN&&userType!=null) {//Provider.of<bool>(context, listen: false)

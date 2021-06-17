@@ -34,7 +34,7 @@ class _BottomSheetChildrensWidgetState
             color: Theme.of(context).canvasColor,
             borderRadius: BorderRadius.circular(15),
             boxShadow: [
-              BoxShadow(blurRadius: 15, color: Colors.red[300], spreadRadius: 5)
+              BoxShadow(blurRadius: 15, color: Colors.teal[300], spreadRadius: 5)
             ],
           ),
           child: Column(
@@ -43,18 +43,18 @@ class _BottomSheetChildrensWidgetState
               Expanded(
                 child: ColumnReusableCardButton(
                   // height: 65,
-                  tileColor: Colors.orangeAccent,
-                  label: string.announcement,
+                  tileColor: Colors.orange,
+                  label: string.timetable,
                   onPressed: () {
                     kopenPage(
                       context,
                       AnnouncementPage(
-                        announcementFor: widget.user.DisplayName// +
+                        announcementFor: widget.user.email// +
                             // widget.user.division.toUpperCase(),
                       ),
                     );
                   },
-                  icon: Icons.notifications,
+                  icon: Icons.timer,
                 ),
               ),
               Expanded(
@@ -65,7 +65,7 @@ class _BottomSheetChildrensWidgetState
                     kopenPage(
                         context,
                         AnnouncementPage(
-                          // standard: widget.user.standard +
+                          announcementFor: widget.user.email, //+
                               // widget.user.division.toUpperCase(),
                         ));
                   },

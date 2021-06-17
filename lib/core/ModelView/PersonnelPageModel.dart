@@ -16,22 +16,10 @@ class PersonnelPageModel extends BaseModel {
   ProfileServices _profileServices = locator<ProfileServices>();
   AppUser _currentUser = AppUser();
 
-  // Map<String, AppUser> workerListMap = {"Homer" :AppUser(displayName: 'flenn',email: 'osjfvhng3@gmail.com'), "Nobody" : AppUser(displayName: 'Anotherflenn',email: 'enova@gmail.com')   };//Map();
-
   StorageServices _storageServices = locator<StorageServices>();
 
-  // Map<String, DocumentSnapshot> get studentsSnapshot =>
-  //     _storageServices.studentsDocumentSnapshots;
+  List<AppUser> get workersListMap => _storageServices.child;
 
-  // Map<String, DocumentSnapshot> get teachersSnapshot =>
-  //     _storageServices.teachersDocumentSnapshots;
-
-  Map<String, AppUser> get workersListMap => _storageServices.workersListMap;
-
-  // Map<String, AppUser> get teachersListMap => _storageServices.teachersListMap;
-
-  // Map<String, List<AppUser>> get studentsParentListMap =>
-  //     _storageServices.studentsParentListMap;
 
   AppUser _selectedWorker = AppUser();
 
@@ -44,12 +32,31 @@ class PersonnelPageModel extends BaseModel {
 
   getSubordinates() async {
     setState(ViewState.Busy);
-    await _storageServices.getChildrens();
+    
+      await _storageServices.getChildrens();
+    // return x;
     setState(ViewState.Idle);
   }
 
+ 
+
+
+  
+  // Map<String, AppUser> workerListMap = {"Homer" :AppUser(displayName: 'flenn',email: 'osjfvhng3@gmail.com'), "Nobody" : AppUser(displayName: 'Anotherflenn',email: 'enova@gmail.com')   };//Map();
+
+  // Map<String, DocumentSnapshot> get studentsSnapshot =>
+  //     _storageServices.studentsDocumentSnapshots;
+
+  // Map<String, DocumentSnapshot> get teachersSnapshot =>
+  //     _storageServices.teachersDocumentSnapshots;
+
+  // Map<String, AppUser> get teachersListMap => _storageServices.teachersListMap;
+
+  // Map<String, List<AppUser>> get studentsParentListMap =>
+  //     _storageServices.studentsParentListMap;
+
   // getChildrens() {
-  //   return workerListMap;
+  //   return _storageServices.getChildrens();
   // }
 
   // getAllWorkers({String standard = '', String division = ''}) async {

@@ -38,6 +38,7 @@ abstract class Services {
   Map<String, String> headers = {
     'Content-type': 'application/json',
     'Accept': 'application/json',
+    // 'Access-Control-Allow-Origin' : 'http://192.168.43.172:40313/task_manager/php/Authentification.php',
   };
 
   String baseUrl = Server.baseUrl;
@@ -50,11 +51,14 @@ abstract class Services {
   String getProfileDataUrl =
       Server.baseUrl + Server.webApi + Server.getProfileData;
 
-  String postAnnouncemnetUrl =
-      Server.baseUrl + Server.webApi + Server.postAnnouncement;
+  String postTaskUrl =
+      Server.baseUrl + Server.webApi + Server.postTask;
 
   String addAssignmentUrl =
       Server.baseUrl + Server.webApi + Server.addAssignment;
+
+  String getNotificationURL =
+      Server.baseUrl + Server.webApi + Server.getnotifURL;
 
 
 String authentifyUrl =
@@ -62,6 +66,26 @@ String authentifyUrl =
 
 String getTaskURL =
       Server.baseUrl + Server.webApi + Server.getTasksURL;
+      
+String getChildrenIDsURL =
+      Server.baseUrl + Server.webApi + Server.getChildids;
+
+String getToolsURL =
+      Server.baseUrl + Server.webApi + Server.getTools;
+      
+
+String pauseTaskURL =
+      Server.baseUrl + Server.webApi + Server.pauseTask;
+
+
+String endTaskURL =
+      Server.baseUrl + Server.webApi + Server.endTask;
+      
+String playTaskURL =
+      Server.baseUrl + Server.webApi + Server.playTask;
+
+  // String getVehicleURL = 
+  // Server.baseUrl + Server.webApi + Server.getVehicleURL;
 
   //DocumentReference _schoolRef = _firestore.collection('Schools').doc(country);
 

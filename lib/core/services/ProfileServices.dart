@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'package:dio/dio.dart';
+import 'package:task_manager/widgets/DynamicThemeChanger.dart';
 
 import 'Services.dart';
 import 'package:flutter/material.dart';
@@ -19,23 +20,27 @@ class ProfileServices extends Services {
       StreamController.broadcast(sync: true);
   AppUser user;
 
-
-  // String country = Services.country;
-  List<AppUser> childrens = [];//[AppUser(id:'543',displayName:"HellBoy"),AppUser(id:'5327',displayName:"Thor")];//[] was in the beggining
+  List<AppUser> child = List.empty(growable: true);
+  
+  
+  //[AppUser(id:'543',displayName:"HellBoy"),AppUser(id:'5327',displayName:"Thor")];//[] was in the beggining
 
 
   ProfileServices() {
-    //getSchoolCode();
-    //getFirebaseUser();
-    //Future<String> userData = sharedPreferencesHelper.getUserDataModel();
     initialiseUser();
-    // loggedInUserStream.add(user);
-
   }
 
   initialiseUser() async {
-    user = json.decode(await sharedPreferencesHelper.getUserDataModel());
-    loggedInUserStream.add(user);
+
+    // List<String,dynamic> dataModel = new List
+
+    // List<dynamic> dataModel =  json.decode(await sharedPreferencesHelper.getUserDataModel())[0];
+
+    // if(dataModel!="N.A"){
+    //   log(dataModel.toString());
+    //   user= new AppUser(email:dataModel[0].toString() ,  sex:dataModel[4].toString() ,displayName:dataModel[2].toString()+dataModel[3].toString() ,unite:dataModel[1].toString() ,birthDate: dataModel[5].toString());
+    //   loggedInUserStream.add(AppUser(displayName: user.DisplayName,email: user.email, unite : user.unite, birthDate: user.birthDate, sex: user.sex ));
+    // }
     
 
   }
@@ -101,18 +106,19 @@ class ProfileServices extends Services {
     String id = await sharedPreferencesHelper.getLoggedInUserId();//email in our case
     UserType userType = await sharedPreferencesHelper.getUserType();
 
-    String userDataModel = await sharedPreferencesHelper.getUserDataModel();
+    // String userDataModel = await sharedPreferencesHelper.getUserDataModel();
 
-    if (userDataModel != 'N.A') {
-      // print("Data Retrieved Succesfully (Local)");
-      final jsonData = await json.decode(userDataModel);
+    // if (userDataModel != 'N.A') {
+    //   log("Data Retrieved Succesfully (Local)");
+    //   final jsonData = await json.decode(userDataModel);
 
-      user = AppUser.fromJson(jsonData);
-      loggedInUserStream.add(user);
-      log("Profile Service, User : "+user.toString());
-      user.toString();
-      return user;
-    }
+    //   log(jsonData.toString());
+    //   user = AppUser.fromJson(jsonData);
+    //   loggedInUserStream.add(user);
+    //   log("Profile Service, User : "+user.toString());
+    //   // user.toString();
+    //   return user;
+    // }
 
     var body = json.encode({
       // "schoolCode": schoolCode.trim().toUpperCase(),
@@ -139,14 +145,14 @@ class ProfileServices extends Services {
     if (response.statusCode == 200) {
       log("Data Retrieved from server Succesfully..");
       final jsonData = json.decode(response.data.toString());
+      
       // log(response.data.toString()); 
       
-
       user = AppUser.fromJson(jsonData[0]);
       sharedPreferencesHelper.setUserDataModel(response.data.toString());
       loggedInUserStream.add(user);
       // loggedInUser=user;
-      user.toString();
+      //user.toString();
       return user;
     } else {
       print("Data Retrieval failed");
@@ -178,35 +184,66 @@ class ProfileServices extends Services {
 
   getChildrens() async {
 
-    String childrens = await sharedPreferencesHelper.getChildIds();
 
-    return {AppUser(displayName: 'flenn1',email: 'jgd'),AppUser(displayName: 'flenn2',email: 'jgd2'),AppUser(displayName: 'flenn3',email: 'jgd5')};
-    //////////TODO: unreturn when you have bolder data plans.. 
-    if (childrens == 'N.A') {
-      this.childrens = [];
-      return;
-    }
-    Map<String, String> childIds = Map.from(
-      jsonDecode(childrens).map(
-        (key, values) {
-          String value = values.toString();
-          return MapEntry(key, value);
-        },
-      ),
+
+    var body = json.encode({
+      "email": user.email,
+      });
+
+      Dio dio = Dio();
+      Options options = Options(
+      contentType: 'multipart/form-data',
+      headers: headers,
     );
-    // await _getChildrensData(childIds);
+  final response = await dio.post(
+        getChildrenIDsURL,
+        options: options,
+        data: body,
+      );
+    var childs;
+  if (response.statusCode == 200) {
+     childs = await json.decode(response.data);
+    List<String> a = List.empty(growable:true);
+    for(int i=0;i<childs.length;i++){
+      a.add(childs[i]["email"]);
+      log(childs[i]["email"].toString());
+    }
+    await _getData(a);
+
+    // await _getData(childIds);
+    // var childIds = Map.from(
+    //   jsonDecode(response.data).map(
+    //     (key, values) {
+    //       String value = values.toString();
+    //       log(value);
+    //       return MapEntry(key, value);
+    //     },
+    //   ),
+    // );
+    //  await _getData(childIds);
+  }
+
+  
+
+
+  // log(childs.toString());
+
+}
+
+
+  _getData(List< String> childIds) async {
+    List<AppUser> childData = List.empty(growable: true);
+    for (String id in childIds) {
+      log("id");
+      AppUser data = await getProfileDataByIdd(id, UserType.STUDENT);
+      if(data!=null)
+        childData.add(data);
+    }
+    child=List.empty(growable:true);
+    child.addAll(childData);
   }
 
   /*
-
-  _getChildrensData(Map<String, String> childIds) async {
-    List<AppUser> childData = [];
-    for (String id in childIds.values) {
-      childData.add(await getProfileDataById(id, UserType.STUDENT));
-    }
-    childrens = childData;
-  }
-
   Future<DocumentReference> _getProfileRef(
       String uid, UserType userType) async {
     await getSchoolCode();
@@ -229,15 +266,15 @@ class ProfileServices extends Services {
 */
   //Fetch Profile Data Using HTTP Request
   Future<AppUser> getProfileDataByIdd(String uid, UserType userType) async {
-    //await getSchoolCode();
+
     var body = json.encode({
-      "schoolCode": schoolCode.trim().toUpperCase(),
-      "id": uid,
-      "userType": UserTypeHelper.getValue(userType),
+      // "schoolCode": schoolCode.trim().toUpperCase(),
+      "email": uid,
+      // "userType": UserTypeHelper.getValue(userType),
       // "country": country
     });
 
-    print(body);
+    log(body);
 
     Dio dio = Dio();
     Options options = Options(
@@ -246,28 +283,32 @@ class ProfileServices extends Services {
     );
 
     final response = await dio.post(
-      profileUpdateUrl,
+      
+      getProfileDataUrl,
       options: options,
       data: body,
       // body: body,
       // headers: headers,
     );
 
-    // final response = await http.post(
-    //   getProfileDataUrl,
-    //   body: body,
-    //   headers: headers,
-    // );
     if (response.statusCode == 200) {
+      
       print("Profile Service, Data Retrieved Succesfully");
-      final jsonData = await json.decode(response.data.toString());
+      if(response.data.toString().length==0)
+        return null;
+      final jsonData = await json.decode(response.data);
+      log(jsonData[0].toString());
+      log("at least there's data");
+      AppUser user = AppUser.fromJson(jsonData[0]);
+      log(user.toString());
+      if(user==null){
+        sharedPreferencesHelper.setUserDataModel(response.data.toString());
+        loggedInUserStream.add(user);
+      }
 
-      AppUser user = AppUser.fromJson(jsonData);
-      user.toString();
-      loggedInUserStream.add(user);
       return user;
     } else {
-      print("Data Retrived failed");
+      print("Data Retrieval failed");
       return AppUser(email: uid);
     }
   }

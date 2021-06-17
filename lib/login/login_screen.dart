@@ -13,7 +13,6 @@ import 'package:task_manager/pages/ProfilePage.dart';
 import '../locator.dart';
 import 'constants.dart';
 import 'custom_route.dart';
-import 'dashboard_screen.dart';
 import 'users.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -44,6 +43,7 @@ class LoginScreen extends StatelessWidget {
       data.name,
       data.password,
       UserType.STUDENT
+      
       //schoolCode,
     );
 
@@ -51,7 +51,7 @@ class LoginScreen extends StatelessWidget {
       if(authError!=AuthErrors.SUCCESS)
         return authError.toString();
 
-      return null;
+      //return authError.toString();
 
 
 
@@ -73,10 +73,10 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return FlutterLogin(
       title: Constants.appName,
-      logo: 'assets/images/ecorp.png',
+      logo: 'assets/images/owl.png',
       logoTag: Constants.logoTag,
       titleTag: Constants.titleTag,
-      // loginAfterSignUp: false,
+      //loginAfterSignUp: true,
       // hideForgotPasswordButton: true,
       // hideSignUpButton: true,
       // messages: LoginMessages(
@@ -173,12 +173,12 @@ class LoginScreen extends StatelessWidget {
       //     // shape: ContinuousRectangleBorder(borderRadius: BorderRadius.circular(55.0)),
       //   ),
       // ),
-      emailValidator: (value) {
-        if (!value.contains('@') || !value.endsWith('.com')) {
-          return "Email must contain '@' and end with '.com'";
-        }
-        return null;
-      },
+      // emailValidator: (value) {
+      //   if (!value.contains('@') || !value.endsWith('.com')) {
+      //     return "Email must contain '@' and end with '.com'";
+      //   }
+      //   return null;
+      // },
       passwordValidator: (value) {
         if (value.isEmpty) {
           return 'Password is empty';
@@ -215,7 +215,7 @@ class LoginScreen extends StatelessWidget {
         return _recoverPassword(name);
         // Show new password dialog
       },
-      showDebugButtons: false,
+      // showDebugButtons: false,
     );
   }
 }

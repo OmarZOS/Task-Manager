@@ -1,47 +1,58 @@
+// import 'package:flutter/material.dart';
+// import 'package:ourESchool/UI/Utility/Resources.dart';
+// import 'package:ourESchool/UI/Utility/constants.dart';
+// import 'package:ourESchool/UI/Widgets/TopBar.dart';
 
-import 'dart:developer';
+
+
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:task_manager/Utilities/constants.dart';
 import 'package:task_manager/core/ModelView/BaseView.dart';
 import 'package:task_manager/core/ModelView/ChildrenGridViewCard.dart';
 import 'package:task_manager/core/ModelView/PersonnelPageModel.dart';
+import 'package:task_manager/core/enums/UserType.dart';
 import 'package:task_manager/core/enums/ViewState.dart';
+import 'package:task_manager/core/models/ProfilePageModel.dart';
+import 'package:task_manager/core/models/User.dart';
 import 'package:task_manager/widgets/BottomSheetChildrensWidget.dart';
+import 'package:task_manager/widgets/MyReusableTile.dart';
 import 'package:task_manager/widgets/TopBar.dart';
 import '../Utilities/Resources.dart';
 
 
 
-class PersonnelPage extends StatelessWidget {
+class DisponiblePersonnelPage extends StatelessWidget {
   
-  //  List<AppUser> workerListMap  ;//{"Homer" :AppUser(displayName: 'flenn',email: 'osjfvhng3@gmail.com'), "Nobody" : AppUser(displayName: 'Anotherflenn',email: 'enova@gmail.com')   };//Map();
-
-  bool childCarde= false;
-
+  bool emptyList=true;
 
   @override
   Widget build(BuildContext context) {
     return BaseView<PersonnelPageModel>(
         onModelReady: (model) {
           model.getSubordinates();
+          for (var item in model.workersListMap) {
+            if(item.disponible)
+              emptyList=false;
+          }
+        
         } ,
         builder: (context, model, child) {
           return Scaffold(
             appBar: TopBar(
-              buttonHeroTag: string.personnel,
+              buttonHeroTag: string.childrens,
               child: kBackBtn,
               onPressed: () {
-                  kbackBtn(context);
-                  childCarde=false;
+                kbackBtn(context);
               },
-              title: string.personnel,
+              title: string.childrens,
             ),
             body: model.state == ViewState.Busy
                 ? kBuzyPage(color: Theme.of(context).primaryColor)
-                : model.workersListMap.length == 0
+                : emptyList
                     ? Center(
-                        child: Text('Aucun subordonné à votre disposition.',
+                        child: Text('Aucun subordonné n\'est disoponible',
                             style: ktitleStyle.copyWith(fontSize: 20)),
                       )
                     : GridView.builder(
@@ -50,26 +61,15 @@ class PersonnelPage extends StatelessWidget {
                           crossAxisCount: 3,
                           childAspectRatio: 9 / 9,
                           crossAxisSpacing: 0,
-                          mainAxisSpacing: 3,
+                          mainAxisSpacing: 0,
                         ),
                         itemCount: model.workersListMap.length,
                         itemBuilder: (context, index) {
-                          return Container(
+                          return (!model.workersListMap[index].disponible)  ? Container():Container(
                             constraints: BoxConstraints(maxHeight: 200, maxWidth: 200),
                             child: ChildrenGridViewCard(
                               user: model.workersListMap[index],
                               onTap: () {
-                                
-                                //   kbackBtn(context);
-                                // childCard!=true;
-                                // kbackBtn(context);
-                                  // log(childCarde.toString());
-                                if(childCarde){
-                                  kbackBtn(context);
-                                  childCarde=!childCarde;
-                                }
-                                childCarde=!childCarde;
-
                                 if (model.workersListMap[index].displayName != '')
                                   showBottomSheet(
                                     elevation: 10,
@@ -80,7 +80,6 @@ class PersonnelPage extends StatelessWidget {
                                     ),
                                   );
                               },
-                              
                             ),
                           );
                         }),

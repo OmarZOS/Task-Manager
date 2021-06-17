@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:task_manager/Utilities/constants.dart';
 import 'package:task_manager/core/enums/UserType.dart';
 import 'package:task_manager/core/models/User.dart';
+import 'package:task_manager/pages/StatisticsPage.dart';
 import 'package:task_manager/widgets/MainDashboard.dart';
 import 'package:task_manager/widgets/TopBar.dart';
 import '../widgets/BottomBar.dart';
@@ -48,14 +49,19 @@ class _HomeState extends State<Home> {
   List<Widget> pages = [
     MainDashboard(),//
     //ChatPage(),
+    StatisticsPage(),
+    SettingPage(),
     //NotificationPage(),
     // CreateAnnouncement(),
-    SettingPage()
   ];
 
   List<Widget> studentPages = [
     StudentDashboard(),
     //SettingPage(),
+    StatisticsPage(),
+    //NotificationPage(),
+    // CreateAnnouncement(),
+    SettingPage()
   ];
 
   @override
@@ -150,7 +156,7 @@ class _HomeState extends State<Home> {
       title: Text(
         string.setting,
       ),
-    )
+    ),
   ];
 
   List<BubbleBottomBarItem> bottomBarItems = [
@@ -168,11 +174,11 @@ class _HomeState extends State<Home> {
     BubbleBottomBarItem(
       backgroundColor: Colors.yellow,//deepPurple
       icon: Icon(
-        Icons.message,
+        Icons.bar_chart
         // size: 25,
       ),
       activeIcon: Icon(
-        Icons.message,
+        Icons.bar_chart,
         color: Colors.yellow,//deepPurple
       ),
       title: Text(string.chat),
@@ -189,7 +195,7 @@ class _HomeState extends State<Home> {
       title: Text(
         string.setting,
       ),
-    )
+    ),
   ];
 
   BubbleBottomBar buildBubbleBottomBar(UserType userType) {
@@ -212,7 +218,7 @@ class _HomeState extends State<Home> {
             if (v == 0) {
               pageName = MainDashboard.pageName;
             } else if (v == 1) {
-              //pageName = ChatPage.pageName;
+              pageName = StatisticsPage.pagename;
             } else if (v == 2) {
               pageName = SettingPage.pageName;
             }

@@ -5,6 +5,8 @@
 
 
 
+import 'dart:developer';
+
 class AppUser {
   //  String photoUrl;
    String email;
@@ -19,6 +21,7 @@ class AppUser {
   //String bloodGroup;
   //  String mobileNo;
    String sex;
+   bool disponible;
   // bool isTeacher=false;
   //bool isVerified;
   // Map<String, dynamic> connection;
@@ -42,6 +45,7 @@ class AppUser {
       //this.firebaseUuid = '',
       // this.connection = null,
       this.displayName = '',
+      this.disponible = false,
       // this.standard = '',
       this.birthDate = '',
       // this.guardianName = '',
@@ -75,7 +79,7 @@ class AppUser {
     displayName = (json['nom'] ?? ' ')+" "+(json['prenom'] ?? ' ');
     birthDate = json['birthDate'] ?? '';
     sex=json['sex']=="1"?'Female':'Male';
-
+    disponible = json['disonible']=="1";
     // log(displayName);
 
     //id = json['id'] ?? '';
@@ -98,10 +102,12 @@ class AppUser {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     // data['photoUrl'] = this.photoUrl;
     data['email'] = this.email;
+    log(data['email']);
     data['unite'] = this.unite.toUpperCase().trim();
     data['displayName'] = this.displayName;
     data['birthDate'] = this.birthDate;
     data['sex'] = (this.sex=="Female");
+    data['disonible'] = (this.disponible=="1");
     // data['id'] = this.id;
     // data['enrollNo'] = this.enrollNo;
     //data['firebaseUuid'] = this.firebaseUuid;

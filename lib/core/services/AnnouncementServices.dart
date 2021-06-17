@@ -1,25 +1,16 @@
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:ourESchool/UI/Utility/constants.dart';
-// import 'package:ourESchool/core/Models/Announcement.dart';
-// import 'package:ourESchool/core/services/Services.dart';
-// import 'package:ourESchool/core/services/StorageServices.dart';
-// import 'package:ourESchool/locator.dart';
-// import 'package:path/path.dart' as p;
 import 'dart:developer';
-
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:task_manager/core/services/ProfileServices.dart';
 import 'dart:convert';
-
 import '../models/Announcement.dart';
 import '../../locator.dart';
 import 'Services.dart';
-import 'StorageService.dart';
 
 class AnnouncementServices extends Services {
   // StorageServices _storageServices = locator<StorageServices>();
-  ProfileServices profileServices = locator<ProfileServices>();
+  // ProfileServices profileServices = locator<ProfileServices>();
   //DocumentSnapshot lastPostSnapshot = null;
   List<dynamic> myTasks = List.empty(growable: true);
 
@@ -31,24 +22,52 @@ class AnnouncementServices extends Services {
   }
 
   init() async {
-    // if (firebaseUser == null) await getFirebaseUser();
-    //if (schoolCode == null) await getSchoolCode();
   }
+
+  Future<bool> endTask(String id)async{
+      var body = json.encode({
+        "ID_TACHE": id,
+      });
+
+      Dio dio = Dio();
+      Options options = Options(
+      contentType: 'multipart/form-data',
+      headers: headers,
+    );
+    //  authentifyUrl =
+    //   Server.baseUrl + Server.webApi + Server.authentify;
+// log(authentifyUrl);
+      final response = await dio.post(
+        endTaskURL,
+        options: options,
+        data: body,
+        // body: body,
+        // headers: headers,
+      );
+
+      log(response.data.toString());
+      if (response.statusCode == 200) {
+        
+        
+        return true;
+          
+        
+
+      } else {
+      log("Task ending request failed");
+      return false;
+    }
+
+  }
+
 
   getAnnouncements(
     String stdDiv_Global,
   ) async {
 
 var body = json.encode({
-      // "schoolCode": schoolCode.trim().toUpperCase(),
-      "email": profileServices.user.email,
-      // "password": password
-      // "userType": UserTypeHelper.getValue(userType),
-      // "country": country
+        "email": stdDiv_Global,
       });
-
-      // log(body);
-
 
       Dio dio = Dio();
       Options options = Options(
@@ -59,31 +78,25 @@ var body = json.encode({
     //   Server.baseUrl + Server.webApi + Server.authentify;
 // log(authentifyUrl);
 final response = await dio.post(
-      getTaskURL,
-      options: options,
-      data: body,
-      // body: body,
-      // headers: headers,
-    );
+  getTaskURL,
+  options: options,
+  data: body,
+  // body: body,
+  // headers: headers,
+);
 
 if (response.statusCode == 200) {
+  log(response.data.toString());
   final jsonData = json.decode(response.data.toString());
+  log(stdDiv_Global);
   log("announcement services json : "+jsonData.toString());
+  myTasks=new List.empty(growable: true);
   myTasks.addAll(jsonData);
 
 
 } else {
       print("Task loading failed");
     }
-
-
-
-
-
-
-
-
-
 
     // List<DocumentSnapshot> _data = new List<DocumentSnapshot>();
 
@@ -111,39 +124,48 @@ if (response.statusCode == 200) {
     // }
   }
 
-  postAnnouncement(Announcement announcement) async {
-    // if (firebaseUser == null) await getFirebaseUser();
-    // if (schoolCode == null) await getSchoolCode();
+  modifierStatusDeTache(String ID,String Setting)async{
 
-    //Timestmap will be directly set by Firebase Functions(througn REST Api)
-    // announcement.timestamp = Timestamp.now();
+    var body = json.encode({
+      "ID": ID,
+    });
+    
 
-    String fileName = "";
-    String filePath = "";
+    log(body.toString());
 
-    if (announcement.photoUrl != '') {
-      // fileName = createCryptoRandomString(8) +
-      //     createCryptoRandomString(8) +
-      //     p.extension(announcement.photoUrl);
+    final response =
+        await http.post((Setting=="pause")?pauseTaskURL:playTaskURL
+        , body: body, headers: headers);
 
-      // announcement.photoUrl = await _storageServices.uploadAnnouncemantPhoto(
-      //     announcement.photoUrl, fileName);
+    if (response.statusCode == 200) {
+      log(response.body.toString());
+      for (var item in myTasks) {
+        if(item["ID_TACHE"]==ID){
+          myTasks[myTasks.indexOf(item)]["Etat"]=(Setting=="pause")?"en_pause":"encours";
+        }
+      }
 
-      // filePath = '${Services.country}/$schoolCode/Posts/$fileName';
+    } else {
+      print("Post posting failed");
     }
-    announcement.photoPath = filePath;
+  
+
+  }
+
+
+
+  postAnnouncement(Announcement announcement) async {
+
     Map announcementMap = announcement.toJson();
 
     var body = json.encode({
-      "schoolCode": schoolCode.toUpperCase(),
-      // "country": Services.country,
       "announcement": announcementMap
     });
 
     print(body.toString());
 
     final response =
-        await http.post(postAnnouncemnetUrl, body: body, headers: headers);
+         await http.post(postTaskUrl, body: body, headers: headers);
 
     if (response.statusCode == 200) {
       print("Post posted Succesfully");

@@ -1,35 +1,38 @@
-
 // import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:ourESchool/core/enums/announcementType.dart';
 
 
 
-class Announcement {
+class Tool {
   String caption;
   String by;
   String forDiv;
   //Timestamp timestamp;
   String forClass;
-  //AnnouncementType type;
+  // String photoUrl;
+  // String photoPath;
+  String type;
   String id;
 
-  Announcement(
-      {
-      this.caption = '',
+  Tool(
+      {this.caption = '',
       this.by,
       this.forDiv,
       //this.timestamp,
       this.forClass,
+      // this.photoUrl = '',
+      // this.photoPath = '',
       //this.type,
-      this.id
-    });
+      this.id});
 
-  Announcement.fromJson(Map<String, dynamic> json) {
+  Tool.fromJson(Map<String, dynamic> json) {
     caption = json['caption'] ?? '';
     by = json['by'];
     forDiv = json['forDiv'];
     // timestamp = json['timestamp'] as Timestamp;
     forClass = json['forClass'];
+    // photoUrl = json['photoUrl'] ?? '';
+    // photoPath = json['photoPath'] ?? '';
     // type = AnnouncementTypeHelper.getEnum(json['type']);
     id = json['id'];
   }
@@ -53,6 +56,9 @@ class Announcement {
     data['forDiv'] = this.forDiv;
     // data['timestamp'] = this.timestamp;
     data['forClass'] = this.forClass;
+    // data['photoUrl'] = this.photoUrl;
+    // //data['type'] = AnnouncementTypeHelper.getValue(this.type);
+    // data['photoPath'] = this.photoPath;
     // data['id'] = this.id;
     return data;
   }
